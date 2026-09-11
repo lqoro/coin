@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="Phantom">
+<meta name="theme-color" content="#181722">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<title>Phantom</title>
+<style>
+:root{
+  --bg:#181722; --bg2:#222034; --card:#2A2843; --card2:#323050;
+  --pri:#AB9FF2; --pri-d:#7A69EA;
+  --txt:#FFFFFF; --dim:#9B9BB4; --dim2:#777390;
+  --green:#21E56F; --red:#FF5C5C; --line:rgba(255,255,255,.07);
+  --safe-t:env(safe-area-inset-top,0px); --safe-b:env(safe-area-inset-bottom,0px);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;padding:0;height:100%;overscroll-behavior-y:none}
+body{
+  background:var(--bg);color:var(--txt);
+  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Inter",system-ui,sans-serif;
+  -webkit-font-smoothing:antialiased;
+  font-size:15px;
+}
+button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer}
+input{font:inherit;color:inherit;background:none;border:0;outline:none}
+.app{max-width:480px;margin:0 auto;min-height:100%;display:flex;flex-direction:column;position:relative}
+
+/* ---------- header ---------- */
+.hdr{
+  position:sticky;top:0;z-index:20;background:var(--bg);
+  padding:calc(var(--safe-t) + 10px) 16px 10px;
+  display:flex;align-items:center;gap:10px;
+}
+.avatar{
+  width:34px;height:34px;border-radius:50%;flex:none;
+  background:linear-gradient(140deg,#7A69EA,#AB9FF2 55%,#4E44CE);
+  display:flex;align-items:center;justify-content:center;font-size:15px;
+}
+.acct{display:flex;flex-direction:column;line-height:1.15;flex:1;min-width:0}
+.acct b{font-size:15px;font-weight:600;display:flex;align-items:center;gap:4px}
+.acct span{font-size:12px;color:var(--dim2)}
+.chev{width:9px;height:9px;border-right:2px solid var(--dim);border-bottom:2px solid var(--dim);transform:rotate(45deg) translateY(-2px)}
+.icon-btn{
+  width:34px;height:34px;border-radius:50%;background:var(--card);
+  display:flex;align-items:center;justify-content:center;flex:none;
+}
+.icon-btn:active{background:var(--card2)}
+
+/* ---------- balance ---------- */
+.bal{padding:22px 16px 4px;text-align:center}
+.bal .amt{font-size:44px;font-weight:600;letter-spacing:-1.4px;font-variant-numeric:tabular-nums;line-height:1.1}
+.bal .amt:active{opacity:.6}
+.bal .chg{margin-top:7px;font-size:15px;font-weight:500;font-variant-numeric:tabular-nums}
+.up{color:var(--green)}.down{color:var(--red)}
+.dimc{color:var(--dim)}
+
+/* ---------- actions ---------- */
+.acts{display:flex;justify-content:center;gap:22px;padding:22px 16px 20px}
+.act{display:flex;flex-direction:column;align-items:center;gap:7px;width:62px}
+.act .c{
+  width:50px;height:50px;border-radius:50%;background:var(--card);
+  display:flex;align-items:center;justify-content:center;
+}
+.act:active .c{background:var(--card2);transform:scale(.94)}
+.act .c{transition:transform .12s}
+.act span{font-size:11.5px;color:var(--dim);font-weight:500}
+
+/* ---------- tabs ---------- */
+.tabs{display:flex;gap:26px;padding:0 20px;border-bottom:1px solid var(--line)}
+.tab{padding:11px 0;font-size:14.5px;font-weight:600;color:var(--dim2);border-bottom:2px solid transparent;margin-bottom:-1px}
+.tab.on{color:var(--txt);border-color:var(--pri)}
+
+/* ---------- token list ---------- */
+.list{padding:6px 0 0;flex:1}
+.row{display:flex;align-items:center;gap:12px;padding:11px 16px}
+.row:active{background:var(--bg2)}
+.tlogo{width:40px;height:40px;border-radius:50%;flex:none;position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.tlogo img{width:100%;height:100%;object-fit:cover}
+.tmeta{flex:1;min-width:0}
+.tmeta b{display:block;font-size:15px;font-weight:500}
+.tmeta span{font-size:13px;color:var(--dim2);font-variant-numeric:tabular-nums}
+.tval{text-align:right;font-variant-numeric:tabular-nums}
+.tval b{display:block;font-size:15px;font-weight:500}
+.tval span{font-size:13px;font-weight:500}
+
+.empty{text-align:center;color:var(--dim2);padding:60px 30px;font-size:14px;line-height:1.6}
+
+/* ---------- bottom nav ---------- */
+.nav{
+  position:sticky;bottom:0;z-index:20;
+  display:flex;justify-content:space-around;align-items:center;
+  background:rgba(24,23,34,.92);backdrop-filter:blur(18px);
+  border-top:1px solid var(--line);
+  padding:9px 8px calc(var(--safe-b) + 9px);
+}
+.nb{display:flex;flex-direction:column;align-items:center;gap:3px;color:var(--dim2);font-size:10px;font-weight:500;width:60px}
+.nb.on{color:var(--pri)}
+.nb svg{width:23px;height:23px}
+
+/* ---------- sheet ---------- */
+.scrim{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:40;opacity:0;pointer-events:none;transition:opacity .22s}
+.scrim.on{opacity:1;pointer-events:auto}
+.sheet{
+  position:fixed;left:0;right:0;bottom:0;z-index:50;
+  max-width:480px;margin:0 auto;
+  background:var(--bg2);border-radius:22px 22px 0 0;
+  padding:10px 18px calc(var(--safe-b) + 20px);
+  transform:translateY(102%);transition:transform .28s cubic-bezier(.32,.72,0,1);
+  max-height:88vh;overflow-y:auto;-webkit-overflow-scrolling:touch;
+}
+.sheet.on{transform:translateY(0)}
+.grab{width:38px;height:4px;border-radius:3px;background:#4A4766;margin:0 auto 16px}
+.sheet h3{margin:0 0 4px;font-size:19px;font-weight:600}
+.sheet p.sub{margin:0 0 18px;color:var(--dim2);font-size:13.5px;line-height:1.5}
+.lbl{font-size:12px;color:var(--dim2);font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin:16px 0 7px}
+.field{display:flex;align-items:center;gap:10px;background:var(--card);border-radius:13px;padding:13px 15px}
+.field input{flex:1;font-size:18px;font-weight:500;font-variant-numeric:tabular-nums;width:100%}
+.field .suf{color:var(--dim2);font-size:14px;font-weight:600}
+.field:focus-within{box-shadow:0 0 0 1.5px var(--pri) inset}
+.hint{font-size:12.5px;color:var(--dim2);margin-top:8px;font-variant-numeric:tabular-nums}
+.btn{
+  display:block;width:100%;background:var(--pri);color:#18172B;
+  font-weight:600;font-size:16px;padding:15px;border-radius:14px;margin-top:22px;text-align:center;
+}
+.btn:active{background:var(--pri-d)}
+.btn.ghost{background:var(--card);color:var(--txt);margin-top:10px}
+.btn.ghost:active{background:var(--card2)}
+.btn.dngr{background:transparent;color:var(--red);margin-top:4px}
+
+.trow{display:flex;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid var(--line)}
+.trow:last-child{border:0}
+.trow .tlogo{width:36px;height:36px}
+.trow .x{color:var(--dim2);font-size:22px;padding:0 4px;line-height:1}
+
+.seg{display:flex;background:var(--card);border-radius:11px;padding:3px;margin-top:4px}
+.seg button{flex:1;padding:9px;border-radius:9px;font-size:13.5px;font-weight:600;color:var(--dim)}
+.seg button.on{background:var(--card2);color:var(--txt)}
+
+.toast{
+  position:fixed;left:50%;transform:translateX(-50%) translateY(20px);
+  bottom:calc(var(--safe-b) + 84px);z-index:80;
+  background:var(--card2);padding:11px 18px;border-radius:24px;font-size:13.5px;font-weight:500;
+  opacity:0;pointer-events:none;transition:.22s;white-space:nowrap;
+  box-shadow:0 8px 30px rgba(0,0,0,.45);
+}
+.toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+.stale{font-size:11px;color:var(--dim2);margin-top:5px}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <div class="hdr">
+    <div class="avatar" id="avatar">👻</div>
+    <button class="acct" id="acctBtn">
+      <b><span id="acctName">Account 1</span><i class="chev"></i></b>
+      <span id="acctAddr">—</span>
+    </button>
+    <button class="icon-btn" id="settingsBtn" aria-label="Settings">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#9B9BB4" stroke-width="2" stroke-linecap="round">
+        <circle cx="12" cy="12" r="3"/>
+        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+      </svg>
+    </button>
+  </div>
+
+  <div class="bal">
+    <div class="amt" id="totalUsd">$0.00</div>
+    <div class="chg" id="totalChg"><span class="dimc">—</span></div>
+    <div class="stale" id="priceNote"></div>
+  </div>
+
+  <div class="acts">
+    <button class="act" id="aRecv"><div class="c">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#AB9FF2" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+    </div><span>Receive</span></button>
+    <button class="act" id="aSend"><div class="c">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#AB9FF2" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+    </div><span>Send</span></button>
+    <button class="act" id="aSwap"><div class="c">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#AB9FF2" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4v14M4 15l3 3 3-3M17 20V6M14 9l3-3 3 3"/></svg>
+    </div><span>Swap</span></button>
+    <button class="act" id="aBuy"><div class="c">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#AB9FF2" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+    </div><span>Buy</span></button>
+  </div>
+
+  <div class="tabs">
+    <button class="tab on" data-tab="tokens">Tokens</button>
+    <button class="tab" data-tab="collect">Collectibles</button>
+    <button class="tab" data-tab="activity">Activity</button>
+  </div>
+
+  <div class="list" id="list"></div>
+
+  <div class="nav">
+    <button class="nb on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>Home</button>
+    <button class="nb" id="nSwap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4v14M4 15l3 3 3-3M17 20V6M14 9l3-3 3 3"/></svg>Swap</button>
+    <button class="nb" id="nSearch"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>Explore</button>
+    <button class="nb" id="nHist"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg>Recent</button>
+  </div>
+</div>
+
+<div class="scrim" id="scrim"></div>
+
+<!-- Edit holdings -->
+<div class="sheet" id="shEdit">
+  <div class="grab"></div>
+  <h3>Edit holdings</h3>
+  <p class="sub">Your balances are stored on this device and persist across refreshes. Prices update live.</p>
+  <div id="editRows"></div>
+  <div class="lbl">Add a token</div>
+  <div class="seg" id="addSeg"></div>
+  <button class="btn" id="editDone">Done</button>
+</div>
+
+<!-- Settings -->
+<div class="sheet" id="shSet">
+  <div class="grab"></div>
+  <h3>Settings</h3>
+  <p class="sub">Display-only settings for this device.</p>
+  <div class="lbl">Account name</div>
+  <div class="field"><input id="setName" maxlength="24" placeholder="Account 1"></div>
+  <div class="lbl">Wallet address</div>
+  <div class="field"><input id="setAddr" maxlength="64" placeholder="Paste or generate"></div>
+  <button class="btn ghost" id="genAddr">Generate random address</button>
+  <div class="lbl">Hide balances</div>
+  <div class="seg" id="hideSeg">
+    <button data-v="0">Shown</button><button data-v="1">Hidden</button>
+  </div>
+  <button class="btn" id="setDone">Save</button>
+  <button class="btn dngr" id="resetAll">Reset everything</button>
+</div>
+
+<!-- Receive -->
+<div class="sheet" id="shRecv">
+  <div class="grab"></div>
+  <h3>Receive</h3>
+  <p class="sub">Your Solana address.</p>
+  <div class="field"><input id="recvAddr" readonly></div>
+  <button class="btn" id="copyAddr">Copy address</button>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+"use strict";
+
+/* ===================== token catalog ===================== */
+const CATALOG = {
+  SOL:  {name:"Solana",    sym:"SOL",  cg:"solana",        binance:"SOLUSDT",  color:"#000", img:"https://assets.coingecko.com/coins/images/4128/small/solana.png"},
+  USDC: {name:"USD Coin",  sym:"USDC", cg:"usd-coin",      binance:null,       color:"#2775CA", img:"https://assets.coingecko.com/coins/images/6319/small/usdc.png", stable:true},
+  BTC:  {name:"Bitcoin",   sym:"BTC",  cg:"bitcoin",       binance:"BTCUSDT",  color:"#F7931A", img:"https://assets.coingecko.com/coins/images/1/small/bitcoin.png"},
+  ETH:  {name:"Ethereum",  sym:"ETH",  cg:"ethereum",      binance:"ETHUSDT",  color:"#627EEA", img:"https://assets.coingecko.com/coins/images/279/small/ethereum.png"},
+  BONK: {name:"Bonk",      sym:"BONK", cg:"bonk",          binance:"BONKUSDT", color:"#F5A623", img:"https://assets.coingecko.com/coins/images/28600/small/bonk.jpg"},
+  JUP:  {name:"Jupiter",   sym:"JUP",  cg:"jupiter-exchange-solana", binance:"JUPUSDT", color:"#0F1A2A", img:"https://assets.coingecko.com/coins/images/34188/small/jup.png"},
+  WIF:  {name:"dogwifhat", sym:"WIF",  cg:"dogwifcoin",    binance:"WIFUSDT",  color:"#C4A484", img:"https://assets.coingecko.com/coins/images/33566/small/dogwifhat.jpg"},
+};
+const DEFAULT_STATE = {
+  name:"Account 1",
+  addr:"",
+  hide:0,
+  holdings:{ SOL: 0 }
+};
+
+/* ===================== persistence ===================== */
+const KEY = "phantom.larp.v1";
+let S = load();
+
+function load(){
+  try{
+    const raw = localStorage.getItem(KEY);
+    if(!raw) return structuredClone(DEFAULT_STATE);
+    const p = JSON.parse(raw);
+    const s = structuredClone(DEFAULT_STATE);
+    if(typeof p.name === "string") s.name = p.name;
+    if(typeof p.addr === "string") s.addr = p.addr;
+    s.hide = p.hide ? 1 : 0;
+    if(p.holdings && typeof p.holdings === "object"){
+      s.holdings = {};
+      for(const [k,v] of Object.entries(p.holdings)){
+        if(CATALOG[k] && Number.isFinite(+v)) s.holdings[k] = +v;
+      }
+      if(!Object.keys(s.holdings).length) s.holdings = {SOL:0};
+    }
+    return s;
+  }catch(e){ return structuredClone(DEFAULT_STATE); }
+}
+function save(){
+  try{ localStorage.setItem(KEY, JSON.stringify(S)); }catch(e){}
+}
+
+/* ===================== price feed ===================== */
+// prices[sym] = {usd, chg24}  (chg24 in percent)
+let prices = {};
+let lastOk = 0;
+
+const CACHE_KEY = KEY + ".prices";
+try{
+  const c = JSON.parse(localStorage.getItem(CACHE_KEY) || "null");
+  if(c && c.prices){ prices = c.prices; lastOk = c.t || 0; }
+}catch(e){}
+
+function symsNeeded(){
+  return Object.keys(S.holdings).filter(s => CATALOG[s]);
+}
+
+async function fromCoinGecko(syms){
+  const ids = syms.map(s => CATALOG[s].cg).join(",");
+  const url = "https://api.coingecko.com/api/v3/simple/price?ids=" + encodeURIComponent(ids) +
+              "&vs_currencies=usd&include_24hr_change=true";
+  const r = await fetch(url, {cache:"no-store"});
+  if(!r.ok) throw new Error("cg " + r.status);
+  const j = await r.json();
+  const out = {};
+  for(const s of syms){
+    const d = j[CATALOG[s].cg];
+    if(d && Number.isFinite(d.usd)) out[s] = {usd:d.usd, chg24: Number.isFinite(d.usd_24h_change) ? d.usd_24h_change : 0};
+  }
+  if(!Object.keys(out).length) throw new Error("cg empty");
+  return out;
+}
+
+async function fromBinance(syms){
+  const out = {};
+  await Promise.all(syms.map(async s => {
+    const t = CATALOG[s];
+    if(t.stable){ out[s] = {usd:1, chg24:0}; return; }
+    if(!t.binance) return;
+    try{
+      const r = await fetch("https://api.binance.com/api/v3/ticker/24hr?symbol=" + t.binance, {cache:"no-store"});
+      if(!r.ok) return;
+      const j = await r.json();
+      const p = parseFloat(j.lastPrice);
+      if(Number.isFinite(p)) out[s] = {usd:p, chg24: parseFloat(j.priceChangePercent) || 0};
+    }catch(e){}
+  }));
+  if(!Object.keys(out).length) throw new Error("binance empty");
+  return out;
+}
+
+async function fromCoinbase(syms){
+  const out = {};
+  await Promise.all(syms.map(async s => {
+    try{
+      const r = await fetch("https://api.coinbase.com/v2/prices/" + s + "-USD/spot", {cache:"no-store"});
+      if(!r.ok) return;
+      const j = await r.json();
+      const p = parseFloat(j && j.data && j.data.amount);
+      if(Number.isFinite(p)) out[s] = {usd:p, chg24: (prices[s] && prices[s].chg24) || 0};
+    }catch(e){}
+  }));
+  if(!Object.keys(out).length) throw new Error("coinbase empty");
+  return out;
+}
+
+let fetching = false;
+async function refreshPrices(){
+  if(fetching) return;
+  const syms = symsNeeded();
+  if(!syms.length){ render(); return; }
+  fetching = true;
+  const sources = [fromCoinGecko, fromBinance, fromCoinbase];
+  for(const src of sources){
+    try{
+      const got = await src(syms);
+      prices = Object.assign({}, prices, got);
+      lastOk = Date.now();
+      try{ localStorage.setItem(CACHE_KEY, JSON.stringify({prices, t:lastOk})); }catch(e){}
+      break;
+    }catch(e){ /* try next source */ }
+  }
+  fetching = false;
+  render();
+}
+
+/* ===================== formatting ===================== */
+const fUsd = n => "$" + n.toLocaleString("en-US",{minimumFractionDigits:2, maximumFractionDigits:2});
+function fPrice(n){
+  if(!Number.isFinite(n)) return "—";
+  if(n >= 1) return "$" + n.toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2});
+  if(n >= 0.01) return "$" + n.toFixed(4);
+  return "$" + n.toPrecision(3);
+}
+function fAmt(n){
+  if(!Number.isFinite(n)) return "0";
+  if(n === 0) return "0";
+  if(n >= 1000) return n.toLocaleString("en-US",{maximumFractionDigits:2});
+  if(n >= 1) return (+n.toFixed(4)).toString();
+  return (+n.toPrecision(4)).toString();
+}
+const mask = s => S.hide ? "••••••" : s;
+const shortAddr = a => a ? a.slice(0,4) + "..." + a.slice(-4) : "No address";
+
+/* ===================== render ===================== */
+const $ = id => document.getElementById(id);
+let tab = "tokens";
+
+function render(){
+  $("acctName").textContent = S.name || "Account 1";
+  $("acctAddr").textContent = shortAddr(S.addr);
+
+  let total = 0, prev = 0, known = false;
+  for(const [sym, amt] of Object.entries(S.holdings)){
+    const p = prices[sym];
+    if(!p) continue;
+    known = true;
+    const v = amt * p.usd;
+    total += v;
+    prev += v / (1 + (p.chg24 || 0)/100);
+  }
+
+  $("totalUsd").textContent = mask(fUsd(total));
+
+  const diff = total - prev;
+  const pct = prev > 0 ? (diff/prev)*100 : 0;
+  const chg = $("totalChg");
+  if(!known){
+    chg.innerHTML = '<span class="dimc">Loading prices…</span>';
+  }else if(S.hide){
+    chg.innerHTML = '<span class="dimc">••••</span>';
+  }else{
+    const cls = diff >= 0 ? "up" : "down";
+    const sign = diff >= 0 ? "+" : "-";
+    chg.innerHTML = '<span class="'+cls+'">'+sign+fUsd(Math.abs(diff)).slice(1)+' '+
+                    (prev>0 ? '('+sign+Math.abs(pct).toFixed(2)+'%)' : '')+'</span>'+
+                    '<span class="dimc"> 24h</span>';
+  }
+
+  const note = $("priceNote");
+  if(lastOk){
+    const age = Math.round((Date.now()-lastOk)/1000);
+    note.textContent = age < 60 ? "Live · updated " + age + "s ago"
+                    : "Cached · " + Math.round(age/60) + "m old";
+  }else{
+    note.textContent = "";
+  }
+
+  const list = $("list");
+  if(tab === "tokens"){
+    const entries = Object.entries(S.holdings)
+      .map(([sym,amt]) => ({sym, amt, p:prices[sym], v: prices[sym] ? amt*prices[sym].usd : 0}))
+      .sort((a,b) => b.v - a.v);
+    list.innerHTML = entries.map(e => {
+      const t = CATALOG[e.sym];
+      const p = e.p;
+      const cls = p && p.chg24 >= 0 ? "up" : "down";
+      const sign = p && p.chg24 >= 0 ? "+" : "";
+      return '<div class="row">'+
+        logo(t)+
+        '<div class="tmeta"><b>'+t.name+'</b><span>'+mask(fAmt(e.amt)+" "+t.sym)+'</span></div>'+
+        '<div class="tval"><b>'+mask(fUsd(e.v))+'</b>'+
+          (p ? '<span class="'+cls+'">'+sign+p.chg24.toFixed(2)+'%</span>'
+             : '<span class="dimc">—</span>')+
+        '</div></div>';
+    }).join("") + '<div class="empty">Tap the balance or ⚙︎ → Edit holdings to change amounts.</div>';
+  }else if(tab === "collect"){
+    list.innerHTML = '<div class="empty">No collectibles yet.<br>Collectibles you own will appear here.</div>';
+  }else{
+    list.innerHTML = '<div class="empty">No recent activity.</div>';
+  }
+}
+
+function logo(t){
+  const fall = '<div style="width:100%;height:100%;background:'+t.color+';display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700">'+t.sym.slice(0,3)+'</div>';
+  return '<div class="tlogo" style="background:'+t.color+'">'+
+    '<img src="'+t.img+'" alt="" onerror="this.parentNode.innerHTML='+JSON.stringify(fall).replace(/"/g,"&quot;")+'">'+
+    '</div>';
+}
+
+/* ===================== sheets ===================== */
+let openSheet = null;
+function show(id){
+  if(openSheet) openSheet.classList.remove("on");
+  openSheet = $(id);
+  openSheet.classList.add("on");
+  $("scrim").classList.add("on");
+}
+function hide(){
+  if(openSheet) openSheet.classList.remove("on");
+  openSheet = null;
+  $("scrim").classList.remove("on");
+}
+$("scrim").addEventListener("click", hide);
+
+let toastT;
+function toast(msg){
+  const t = $("toast");
+  t.textContent = msg;
+  t.classList.add("on");
+  clearTimeout(toastT);
+  toastT = setTimeout(() => t.classList.remove("on"), 1700);
+}
+
+/* ---- edit holdings ---- */
+function openEdit(){
+  const rows = $("editRows");
+  rows.innerHTML = Object.keys(S.holdings).map(sym => {
+    const t = CATALOG[sym];
+    return '<div class="trow">'+logo(t)+
+      '<div style="flex:1;min-width:0">'+
+        '<div style="font-weight:500">'+t.sym+'</div>'+
+        '<div style="font-size:12px;color:var(--dim2)">'+(prices[sym] ? fPrice(prices[sym].usd) : "—")+'</div>'+
+      '</div>'+
+      '<div class="field" style="width:150px;padding:9px 12px">'+
+        '<input type="text" inputmode="decimal" data-sym="'+sym+'" value="'+fAmt(S.holdings[sym])+'">'+
+      '</div>'+
+      (sym === "SOL" && Object.keys(S.holdings).length === 1 ? "" : '<button class="x" data-del="'+sym+'">×</button>')+
+    '</div>';
+  }).join("");
+
+  rows.querySelectorAll("input[data-sym]").forEach(inp => {
+    inp.addEventListener("input", () => {
+      const v = parseFloat(inp.value.replace(/,/g,""));
+      S.holdings[inp.dataset.sym] = Number.isFinite(v) && v >= 0 ? v : 0;
+      save(); render();
+    });
+    inp.addEventListener("focus", () => inp.select());
+  });
+  rows.querySelectorAll("button[data-del]").forEach(b => {
+    b.addEventListener("click", () => {
+      delete S.holdings[b.dataset.del];
+      save(); render(); openEdit();
+    });
+  });
+
+  const seg = $("addSeg");
+  const avail = Object.keys(CATALOG).filter(s => !(s in S.holdings));
+  seg.innerHTML = avail.length
+    ? avail.map(s => '<button data-add="'+s+'">'+s+'</button>').join("")
+    : '<button style="color:var(--dim2)" disabled>All tokens added</button>';
+  seg.querySelectorAll("button[data-add]").forEach(b => {
+    b.addEventListener("click", () => {
+      S.holdings[b.dataset.add] = 0;
+      save(); render(); openEdit(); refreshPrices();
+    });
+  });
+
+  show("shEdit");
+}
+$("editDone").addEventListener("click", () => { hide(); refreshPrices(); });
+$("totalUsd").addEventListener("click", openEdit);
+$("aSwap").addEventListener("click", openEdit);
+$("nSwap").addEventListener("click", openEdit);
+
+/* ---- settings ---- */
+const B58 = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz";
+function randAddr(){
+  const a = new Uint8Array(44);
+  crypto.getRandomValues(a);
+  return Array.from(a, b => B58[b % 58]).join("");
+}
+function openSet(){
+  $("setName").value = S.name;
+  $("setAddr").value = S.addr;
+  $("hideSeg").querySelectorAll("button").forEach(b =>
+    b.classList.toggle("on", (+b.dataset.v) === S.hide));
+  show("shSet");
+}
+$("settingsBtn").addEventListener("click", openSet);
+$("acctBtn").addEventListener("click", openSet);
+$("genAddr").addEventListener("click", () => { $("setAddr").value = randAddr(); });
+$("hideSeg").addEventListener("click", e => {
+  const b = e.target.closest("button[data-v]");
+  if(!b) return;
+  S.hide = +b.dataset.v;
+  $("hideSeg").querySelectorAll("button").forEach(x => x.classList.toggle("on", x === b));
+  save(); render();
+});
+$("setDone").addEventListener("click", () => {
+  S.name = ($("setName").value || "Account 1").trim();
+  S.addr = $("setAddr").value.trim();
+  save(); render(); hide(); toast("Saved");
+});
+$("resetAll").addEventListener("click", () => {
+  if(!confirm("Reset all balances and settings?")) return;
+  S = structuredClone(DEFAULT_STATE);
+  save(); render(); hide(); toast("Reset");
+});
+
+/* ---- receive ---- */
+function openRecv(){
+  if(!S.addr){ S.addr = randAddr(); save(); render(); }
+  $("recvAddr").value = S.addr;
+  show("shRecv");
+}
+$("aRecv").addEventListener("click", openRecv);
+$("copyAddr").addEventListener("click", async () => {
+  try{ await navigator.clipboard.writeText(S.addr); toast("Address copied"); }
+  catch(e){ $("recvAddr").select(); document.execCommand("copy"); toast("Address copied"); }
+});
+$("aSend").addEventListener("click", () => toast("Nothing to send here 👻"));
+$("aBuy").addEventListener("click", openEdit);
+$("nSearch").addEventListener("click", () => toast("Explore is decorative"));
+$("nHist").addEventListener("click", () => { tab="activity"; syncTabs(); });
+
+/* ---- tabs ---- */
+function syncTabs(){
+  document.querySelectorAll(".tab").forEach(t => t.classList.toggle("on", t.dataset.tab === tab));
+  render();
+}
+document.querySelectorAll(".tab").forEach(t =>
+  t.addEventListener("click", () => { tab = t.dataset.tab; syncTabs(); }));
+
+/* ===================== boot ===================== */
+if(!S.addr){ S.addr = randAddr(); save(); }
+render();
+refreshPrices();
+setInterval(refreshPrices, 30000);
+setInterval(() => { if(lastOk) render(); }, 1000);
+document.addEventListener("visibilitychange", () => { if(!document.hidden) refreshPrices(); });
+window.addEventListener("online", refreshPrices);
+
+if("serviceWorker" in navigator){
+  navigator.serviceWorker.register("sw.js").catch(() => {});
+}
+})();
+</script>
+</body>
+</html>
