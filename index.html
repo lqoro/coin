@@ -7,16 +7,17 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta name="apple-mobile-web-app-title" content="Phantom">
-<meta name="theme-color" content="#181722">
+<meta name="theme-color" content="#000000">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icon-180.png">
 <title>Phantom</title>
 <style>
 :root{
-  --bg:#181722; --bg2:#222034; --card:#2A2843; --card2:#323050;
+  --bg:#000000; --bg2:#0B0B0D; --card:#141416; --card2:#1D1D20;
   --pri:#AB9FF2; --pri-d:#7A69EA;
-  --txt:#FFFFFF; --dim:#9B9BB4; --dim2:#777390;
-  --green:#21E56F; --red:#FF5C5C; --line:rgba(255,255,255,.07);
+  --txt:#FFFFFF; --dim:#9B9BA3; --dim2:#6E6E76;
+  --green:#3DFF9A; --green-bg:rgba(61,255,154,.15); --red:#FF5C5C; --red-bg:rgba(255,92,92,.15);
+  --line:rgba(255,255,255,.06);
   --safe-t:env(safe-area-inset-top,0px); --safe-b:env(safe-area-inset-bottom,0px);
 }
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -31,77 +32,97 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
 input{font:inherit;color:inherit;background:none;border:0;outline:none}
 .app{max-width:480px;margin:0 auto;min-height:100%;display:flex;flex-direction:column;position:relative}
 
-/* ---------- header ---------- */
+/* ---------- top pill tabs ---------- */
 .hdr{
   position:sticky;top:0;z-index:20;background:var(--bg);
-  padding:calc(var(--safe-t) + 10px) 16px 10px;
-  display:flex;align-items:center;gap:10px;
+  padding:calc(var(--safe-t) + 10px) 14px 12px;
+  display:flex;align-items:center;gap:8px;
+  overflow-x:auto;scrollbar-width:none;
 }
+.hdr::-webkit-scrollbar{display:none}
 .avatar{
-  width:34px;height:34px;border-radius:50%;flex:none;
-  background:linear-gradient(140deg,#7A69EA,#AB9FF2 55%,#4E44CE);
-  display:flex;align-items:center;justify-content:center;font-size:15px;
+  width:38px;height:38px;border-radius:50%;flex:none;
+  background:linear-gradient(140deg,#FFD86B,#FF9F6B 55%,#FF6B9F);
+  display:flex;align-items:center;justify-content:center;font-size:17px;overflow:hidden;
 }
-.acct{display:flex;flex-direction:column;line-height:1.15;flex:1;min-width:0}
-.acct b{font-size:15px;font-weight:600;display:flex;align-items:center;gap:4px}
-.acct span{font-size:12px;color:var(--dim2)}
-.chev{width:9px;height:9px;border-right:2px solid var(--dim);border-bottom:2px solid var(--dim);transform:rotate(45deg) translateY(-2px)}
-.icon-btn{
-  width:34px;height:34px;border-radius:50%;background:var(--card);
-  display:flex;align-items:center;justify-content:center;flex:none;
+.ptab{
+  padding:9px 18px;border-radius:20px;font-size:15px;font-weight:600;color:var(--dim);
+  background:var(--card);white-space:nowrap;flex:none;
 }
-.icon-btn:active{background:var(--card2)}
+.ptab.on{background:var(--pri);color:#181722}
+
+/* ---------- account row ---------- */
+.acctRow{padding:6px 20px 0}
+.acctBtn{display:flex;align-items:center;gap:4px;color:var(--dim);font-size:15px;font-weight:500}
+.chev{width:8px;height:8px;border-right:2px solid var(--dim);border-bottom:2px solid var(--dim);transform:rotate(45deg) translateY(-1px);margin-left:1px}
 
 /* ---------- balance ---------- */
-.bal{padding:22px 16px 4px;text-align:center}
-.bal .amt{font-size:44px;font-weight:600;letter-spacing:-1.4px;font-variant-numeric:tabular-nums;line-height:1.1}
+.bal{padding:6px 20px 4px}
+.bal .amt{font-size:52px;font-weight:700;letter-spacing:-1.6px;font-variant-numeric:tabular-nums;line-height:1.08}
 .bal .amt:active{opacity:.6}
-.bal .chg{margin-top:7px;font-size:15px;font-weight:500;font-variant-numeric:tabular-nums}
+.bal .chgRow{margin-top:8px;display:flex;align-items:center;gap:8px;font-size:15px;font-weight:600;font-variant-numeric:tabular-nums}
 .up{color:var(--green)}.down{color:var(--red)}
 .dimc{color:var(--dim)}
+.pctPill{padding:3px 9px;border-radius:8px;font-size:14px;font-weight:700}
+.pctPill.up{background:var(--green-bg);color:var(--green)}
+.pctPill.down{background:var(--red-bg);color:var(--red)}
+.stale{font-size:11.5px;color:var(--dim2);margin-top:7px}
 
-/* ---------- actions ---------- */
-.acts{display:flex;justify-content:center;gap:22px;padding:22px 16px 20px}
-.act{display:flex;flex-direction:column;align-items:center;gap:7px;width:62px}
-.act .c{
-  width:50px;height:50px;border-radius:50%;background:var(--card);
+/* ---------- section ---------- */
+.sec{padding:22px 20px 0}
+.secHdr{display:flex;align-items:center;gap:5px;font-size:19px;font-weight:700;margin-bottom:10px}
+.secHdr .chevR{width:8px;height:8px;border-right:2px solid var(--dim2);border-bottom:2px solid var(--dim2);transform:rotate(-45deg);margin-left:2px;margin-top:1px}
+
+/* generic pill row (cash / token) */
+.prow{
+  display:flex;align-items:center;gap:12px;background:var(--card);border-radius:18px;
+  padding:14px 16px;margin-bottom:10px;
+}
+.prow:active{background:var(--card2)}
+.picon{width:38px;height:38px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;overflow:hidden;background:var(--card2)}
+.picon img{width:100%;height:100%;object-fit:cover}
+.pmeta{flex:1;min-width:0}
+.pmeta b{display:block;font-size:16px;font-weight:700}
+.pmeta span{font-size:13.5px;color:var(--dim2);font-variant-numeric:tabular-nums}
+.pval{text-align:right;font-variant-numeric:tabular-nums}
+.pval b{display:block;font-size:16px;font-weight:700}
+.pval span{font-size:13.5px;font-weight:600}
+
+/* ---------- horizontal scroller (perps / predictions) ---------- */
+.hscroll{display:flex;gap:11px;overflow-x:auto;padding-bottom:2px;scrollbar-width:none;margin:0 -20px;padding-left:20px;padding-right:20px}
+.hscroll::-webkit-scrollbar{display:none}
+.pcard{
+  flex:none;width:130px;background:var(--card);border-radius:18px;padding:14px;
+}
+.pcard .plogo{width:36px;height:36px;border-radius:50%;overflow:hidden;margin-bottom:22px;display:flex;align-items:center;justify-content:center;background:var(--card2)}
+.pcard .plogo img{width:100%;height:100%;object-fit:cover}
+.pcard .prow-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:22px}
+.lev{background:var(--card2);color:var(--dim);font-size:11px;font-weight:700;padding:3px 7px;border-radius:6px}
+.pcard b{display:block;font-size:15px;font-weight:700}
+.pcard .chg{font-size:13.5px;font-weight:700;margin-top:2px}
+.predcard{flex:none;width:190px;border-radius:18px;overflow:hidden;background:var(--card)}
+.predcard .art{height:90px;display:flex;align-items:center;justify-content:center;font-size:30px}
+.predcard .cap{padding:10px 12px 12px;font-size:13px;font-weight:600;color:var(--dim);line-height:1.35}
+
+.empty{color:var(--dim2);padding:16px 2px 4px;font-size:13.5px;line-height:1.6}
+
+/* ---------- bottom search bar ---------- */
+.spacer{flex:1}
+.searchWrap{
+  position:sticky;bottom:0;z-index:20;
+  display:flex;align-items:center;gap:10px;
+  padding:10px 16px calc(var(--safe-b) + 14px);
+  background:linear-gradient(to top, var(--bg) 60%, transparent);
+}
+.searchBar{
+  flex:1;display:flex;align-items:center;gap:9px;background:var(--card);
+  border-radius:24px;padding:13px 18px;color:var(--dim2);font-size:15px;
+}
+.plusBtn{
+  width:46px;height:46px;border-radius:50%;background:var(--pri);flex:none;
   display:flex;align-items:center;justify-content:center;
 }
-.act:active .c{background:var(--card2);transform:scale(.94)}
-.act .c{transition:transform .12s}
-.act span{font-size:11.5px;color:var(--dim);font-weight:500}
-
-/* ---------- tabs ---------- */
-.tabs{display:flex;gap:26px;padding:0 20px;border-bottom:1px solid var(--line)}
-.tab{padding:11px 0;font-size:14.5px;font-weight:600;color:var(--dim2);border-bottom:2px solid transparent;margin-bottom:-1px}
-.tab.on{color:var(--txt);border-color:var(--pri)}
-
-/* ---------- token list ---------- */
-.list{padding:6px 0 0;flex:1}
-.row{display:flex;align-items:center;gap:12px;padding:11px 16px}
-.row:active{background:var(--bg2)}
-.tlogo{width:40px;height:40px;border-radius:50%;flex:none;position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden}
-.tlogo img{width:100%;height:100%;object-fit:cover}
-.tmeta{flex:1;min-width:0}
-.tmeta b{display:block;font-size:15px;font-weight:500}
-.tmeta span{font-size:13px;color:var(--dim2);font-variant-numeric:tabular-nums}
-.tval{text-align:right;font-variant-numeric:tabular-nums}
-.tval b{display:block;font-size:15px;font-weight:500}
-.tval span{font-size:13px;font-weight:500}
-
-.empty{text-align:center;color:var(--dim2);padding:60px 30px;font-size:14px;line-height:1.6}
-
-/* ---------- bottom nav ---------- */
-.nav{
-  position:sticky;bottom:0;z-index:20;
-  display:flex;justify-content:space-around;align-items:center;
-  background:rgba(24,23,34,.92);backdrop-filter:blur(18px);
-  border-top:1px solid var(--line);
-  padding:9px 8px calc(var(--safe-b) + 9px);
-}
-.nb{display:flex;flex-direction:column;align-items:center;gap:3px;color:var(--dim2);font-size:10px;font-weight:500;width:60px}
-.nb.on{color:var(--pri)}
-.nb svg{width:23px;height:23px}
+.plusBtn:active{background:var(--pri-d)}
 
 /* ---------- sheet ---------- */
 .scrim{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:40;opacity:0;pointer-events:none;transition:opacity .22s}
@@ -123,7 +144,6 @@ input{font:inherit;color:inherit;background:none;border:0;outline:none}
 .field input{flex:1;font-size:18px;font-weight:500;font-variant-numeric:tabular-nums;width:100%}
 .field .suf{color:var(--dim2);font-size:14px;font-weight:600}
 .field:focus-within{box-shadow:0 0 0 1.5px var(--pri) inset}
-.hint{font-size:12.5px;color:var(--dim2);margin-top:8px;font-variant-numeric:tabular-nums}
 .btn{
   display:block;width:100%;background:var(--pri);color:#18172B;
   font-weight:600;font-size:16px;padding:15px;border-radius:14px;margin-top:22px;text-align:center;
@@ -135,22 +155,24 @@ input{font:inherit;color:inherit;background:none;border:0;outline:none}
 
 .trow{display:flex;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid var(--line)}
 .trow:last-child{border:0}
-.trow .tlogo{width:36px;height:36px}
+.trow .picon{width:36px;height:36px}
 .trow .x{color:var(--dim2);font-size:22px;padding:0 4px;line-height:1}
 
-.seg{display:flex;background:var(--card);border-radius:11px;padding:3px;margin-top:4px}
-.seg button{flex:1;padding:9px;border-radius:9px;font-size:13.5px;font-weight:600;color:var(--dim)}
+.seg{display:flex;flex-wrap:wrap;gap:8px;margin-top:4px}
+.seg button{padding:9px 14px;border-radius:11px;font-size:13.5px;font-weight:600;color:var(--dim);background:var(--card)}
 .seg button.on{background:var(--card2);color:var(--txt)}
+.hideSeg{display:flex;background:var(--card);border-radius:11px;padding:3px;margin-top:4px}
+.hideSeg button{flex:1;padding:9px;border-radius:9px;font-size:13.5px;font-weight:600;color:var(--dim)}
+.hideSeg button.on{background:var(--card2);color:var(--txt)}
 
 .toast{
   position:fixed;left:50%;transform:translateX(-50%) translateY(20px);
-  bottom:calc(var(--safe-b) + 84px);z-index:80;
+  bottom:calc(var(--safe-b) + 90px);z-index:80;
   background:var(--card2);padding:11px 18px;border-radius:24px;font-size:13.5px;font-weight:500;
   opacity:0;pointer-events:none;transition:.22s;white-space:nowrap;
   box-shadow:0 8px 30px rgba(0,0,0,.45);
 }
 .toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
-.stale{font-size:11px;color:var(--dim2);margin-top:5px}
 </style>
 </head>
 <body>
@@ -158,52 +180,61 @@ input{font:inherit;color:inherit;background:none;border:0;outline:none}
 
   <div class="hdr">
     <div class="avatar" id="avatar">👻</div>
-    <button class="acct" id="acctBtn">
-      <b><span id="acctName">Account 1</span><i class="chev"></i></b>
-      <span id="acctAddr">—</span>
-    </button>
-    <button class="icon-btn" id="settingsBtn" aria-label="Settings">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#9B9BB4" stroke-width="2" stroke-linecap="round">
-        <circle cx="12" cy="12" r="3"/>
-        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
-      </svg>
-    </button>
+    <button class="ptab on" data-tab="home">Home</button>
+    <button class="ptab" data-tab="trade">Trade</button>
+    <button class="ptab" data-tab="predict">Predict</button>
+    <button class="ptab" data-tab="explore">Explore</button>
+  </div>
+
+  <div class="acctRow">
+    <button class="acctBtn" id="acctBtn"><span id="acctName">Account 1</span><i class="chev"></i></button>
   </div>
 
   <div class="bal">
     <div class="amt" id="totalUsd">$0.00</div>
-    <div class="chg" id="totalChg"><span class="dimc">—</span></div>
+    <div class="chgRow" id="totalChg"><span class="dimc">—</span></div>
     <div class="stale" id="priceNote"></div>
   </div>
 
-  <div class="acts">
-    <button class="act" id="aRecv"><div class="c">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#AB9FF2" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
-    </div><span>Receive</span></button>
-    <button class="act" id="aSend"><div class="c">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#AB9FF2" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
-    </div><span>Send</span></button>
-    <button class="act" id="aSwap"><div class="c">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#AB9FF2" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4v14M4 15l3 3 3-3M17 20V6M14 9l3-3 3 3"/></svg>
-    </div><span>Swap</span></button>
-    <button class="act" id="aBuy"><div class="c">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#AB9FF2" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
-    </div><span>Buy</span></button>
+  <div class="sec">
+    <div class="secHdr">Cash</div>
+    <div class="prow" id="cashRow">
+      <div class="picon" style="background:#2E7D46">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="3"/></svg>
+      </div>
+      <div class="pmeta"><b>Cash</b></div>
+      <div class="pval"><b id="cashVal">$0.00</b></div>
+    </div>
   </div>
 
-  <div class="tabs">
-    <button class="tab on" data-tab="tokens">Tokens</button>
-    <button class="tab" data-tab="collect">Collectibles</button>
-    <button class="tab" data-tab="activity">Activity</button>
+  <div class="sec">
+    <div class="secHdr">Tokens <i class="chevR"></i></div>
+    <div id="tokenList"></div>
   </div>
 
-  <div class="list" id="list"></div>
+  <div class="sec">
+    <div class="secHdr">Perps <i class="chevR"></i></div>
+    <div class="hscroll" id="perpsList"></div>
+  </div>
 
-  <div class="nav">
-    <button class="nb on"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>Home</button>
-    <button class="nb" id="nSwap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4v14M4 15l3 3 3-3M17 20V6M14 9l3-3 3 3"/></svg>Swap</button>
-    <button class="nb" id="nSearch"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>Explore</button>
-    <button class="nb" id="nHist"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2"/></svg>Recent</button>
+  <div class="sec">
+    <div class="secHdr">Predictions <i class="chevR"></i></div>
+    <div class="hscroll" id="predList">
+      <div class="predcard"><div class="art" style="background:linear-gradient(135deg,#F76B6B,#3B6BF7)">⚽</div><div class="cap">Levante vs Barcelona</div></div>
+      <div class="predcard"><div class="art" style="background:#BFE3FF">🎾</div><div class="cap">US Open 2026 Winner</div></div>
+    </div>
+  </div>
+
+  <div class="spacer"></div>
+
+  <div class="searchWrap">
+    <div class="searchBar">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      Search Phantom
+    </div>
+    <button class="plusBtn" id="plusBtn">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#181722" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+    </button>
   </div>
 </div>
 
@@ -231,20 +262,11 @@ input{font:inherit;color:inherit;background:none;border:0;outline:none}
   <div class="field"><input id="setAddr" maxlength="64" placeholder="Paste or generate"></div>
   <button class="btn ghost" id="genAddr">Generate random address</button>
   <div class="lbl">Hide balances</div>
-  <div class="seg" id="hideSeg">
+  <div class="hideSeg" id="hideSeg">
     <button data-v="0">Shown</button><button data-v="1">Hidden</button>
   </div>
   <button class="btn" id="setDone">Save</button>
   <button class="btn dngr" id="resetAll">Reset everything</button>
-</div>
-
-<!-- Receive -->
-<div class="sheet" id="shRecv">
-  <div class="grab"></div>
-  <h3>Receive</h3>
-  <p class="sub">Your Solana address.</p>
-  <div class="field"><input id="recvAddr" readonly></div>
-  <button class="btn" id="copyAddr">Copy address</button>
 </div>
 
 <div class="toast" id="toast"></div>
@@ -263,6 +285,10 @@ const CATALOG = {
   JUP:  {name:"Jupiter",   sym:"JUP",  cg:"jupiter-exchange-solana", binance:"JUPUSDT", color:"#0F1A2A", img:"https://assets.coingecko.com/coins/images/34188/small/jup.png"},
   WIF:  {name:"dogwifhat", sym:"WIF",  cg:"dogwifcoin",    binance:"WIFUSDT",  color:"#C4A484", img:"https://assets.coingecko.com/coins/images/33566/small/dogwifhat.jpg"},
 };
+const PERPS = [
+  {sym:"BTC", lev:"40x"},
+  {sym:"ETH", lev:"25x"},
+];
 const DEFAULT_STATE = {
   name:"Account 1",
   addr:"",
@@ -309,7 +335,9 @@ try{
 }catch(e){}
 
 function symsNeeded(){
-  return Object.keys(S.holdings).filter(s => CATALOG[s]);
+  const s = new Set(Object.keys(S.holdings));
+  PERPS.forEach(p => s.add(p.sym));
+  return Array.from(s).filter(x => CATALOG[x]);
 }
 
 async function fromCoinGecko(syms){
@@ -382,7 +410,14 @@ async function refreshPrices(){
 }
 
 /* ===================== formatting ===================== */
-const fUsd = n => "$" + n.toLocaleString("en-US",{minimumFractionDigits:2, maximumFractionDigits:2});
+function fUsd(n, opts){
+  opts = opts || {};
+  const abs = Math.abs(n);
+  // Phantom shows extra precision for sub-cent totals (e.g. $0.0112)
+  let max = 2;
+  if(abs > 0 && abs < 1 && !opts.compact) max = 4;
+  return "$" + n.toLocaleString("en-US",{minimumFractionDigits:2, maximumFractionDigits:max});
+}
 function fPrice(n){
   if(!Number.isFinite(n)) return "—";
   if(n >= 1) return "$" + n.toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2});
@@ -394,6 +429,7 @@ function fAmt(n){
   if(n === 0) return "0";
   if(n >= 1000) return n.toLocaleString("en-US",{maximumFractionDigits:2});
   if(n >= 1) return (+n.toFixed(4)).toString();
+  if(n < 0.00001 && n > 0) return "< 0.00001";
   return (+n.toPrecision(4)).toString();
 }
 const mask = s => S.hide ? "••••••" : s;
@@ -401,11 +437,9 @@ const shortAddr = a => a ? a.slice(0,4) + "..." + a.slice(-4) : "No address";
 
 /* ===================== render ===================== */
 const $ = id => document.getElementById(id);
-let tab = "tokens";
 
 function render(){
   $("acctName").textContent = S.name || "Account 1";
-  $("acctAddr").textContent = shortAddr(S.addr);
 
   let total = 0, prev = 0, known = false;
   for(const [sym, amt] of Object.entries(S.holdings)){
@@ -418,6 +452,7 @@ function render(){
   }
 
   $("totalUsd").textContent = mask(fUsd(total));
+  $("cashVal").textContent = mask("$0.00");
 
   const diff = total - prev;
   const pct = prev > 0 ? (diff/prev)*100 : 0;
@@ -429,9 +464,8 @@ function render(){
   }else{
     const cls = diff >= 0 ? "up" : "down";
     const sign = diff >= 0 ? "+" : "-";
-    chg.innerHTML = '<span class="'+cls+'">'+sign+fUsd(Math.abs(diff)).slice(1)+' '+
-                    (prev>0 ? '('+sign+Math.abs(pct).toFixed(2)+'%)' : '')+'</span>'+
-                    '<span class="dimc"> 24h</span>';
+    chg.innerHTML = '<span class="'+cls+'">'+sign+fUsd(Math.abs(diff)).slice(1)+'</span>'+
+                    (prev>0 ? '<span class="pctPill '+cls+'">'+sign+Math.abs(pct).toFixed(2)+'%</span>' : '');
   }
 
   const note = $("priceNote");
@@ -443,36 +477,45 @@ function render(){
     note.textContent = "";
   }
 
-  const list = $("list");
-  if(tab === "tokens"){
-    const entries = Object.entries(S.holdings)
-      .map(([sym,amt]) => ({sym, amt, p:prices[sym], v: prices[sym] ? amt*prices[sym].usd : 0}))
-      .sort((a,b) => b.v - a.v);
-    list.innerHTML = entries.map(e => {
-      const t = CATALOG[e.sym];
-      const p = e.p;
-      const cls = p && p.chg24 >= 0 ? "up" : "down";
-      const sign = p && p.chg24 >= 0 ? "+" : "";
-      return '<div class="row">'+
-        logo(t)+
-        '<div class="tmeta"><b>'+t.name+'</b><span>'+mask(fAmt(e.amt)+" "+t.sym)+'</span></div>'+
-        '<div class="tval"><b>'+mask(fUsd(e.v))+'</b>'+
-          (p ? '<span class="'+cls+'">'+sign+p.chg24.toFixed(2)+'%</span>'
-             : '<span class="dimc">—</span>')+
-        '</div></div>';
-    }).join("") + '<div class="empty">Tap the balance or ⚙︎ → Edit holdings to change amounts.</div>';
-  }else if(tab === "collect"){
-    list.innerHTML = '<div class="empty">No collectibles yet.<br>Collectibles you own will appear here.</div>';
-  }else{
-    list.innerHTML = '<div class="empty">No recent activity.</div>';
-  }
+  // Tokens
+  const entries = Object.entries(S.holdings)
+    .map(([sym,amt]) => ({sym, amt, p:prices[sym], v: prices[sym] ? amt*prices[sym].usd : 0}))
+    .sort((a,b) => b.v - a.v);
+  $("tokenList").innerHTML = entries.length ? entries.map(e => {
+    const t = CATALOG[e.sym];
+    const p = e.p;
+    const cls = p && p.chg24 >= 0 ? "up" : "down";
+    const sign = p && p.chg24 >= 0 ? "+" : "";
+    const amtLabel = e.amt === 0 ? "0 "+t.sym : (e.amt < 0.00001 ? "&lt; 0.00001 "+t.sym : fAmt(e.amt)+" "+t.sym);
+    return '<div class="prow" data-edit="1">'+
+      logo(t)+
+      '<div class="pmeta"><b>'+t.name+'</b><span>'+mask(amtLabel)+'</span></div>'+
+      '<div class="pval"><b>'+mask(fUsd(e.v))+'</b>'+
+        (p ? '<span class="'+cls+'">'+sign+'&lt;'+ (e.v<0.01 && e.v>0 ? '$0.01' : fUsd(Math.abs(e.v*(p.chg24||0)/100),{compact:true})) +'</span>'
+           : '<span class="dimc">—</span>')+
+      '</div></div>';
+  }).join("") : '<div class="empty">Tap + to add a token and set how much you have.</div>';
+
+  // Perps (decorative, price-linked)
+  $("perpsList").innerHTML = PERPS.map(pp => {
+    const t = CATALOG[pp.sym];
+    const p = prices[pp.sym];
+    const cls = p && p.chg24 >= 0 ? "up" : "down";
+    const sign = p && p.chg24 >= 0 ? "+" : "";
+    return '<div class="pcard">'+
+      '<div class="prow-top"><div class="plogo">'+logoImg(t)+'</div><span class="lev">'+pp.lev+'</span></div>'+
+      '<b>'+t.sym+'</b>'+
+      '<div class="chg '+cls+'">'+(p ? sign+p.chg24.toFixed(2)+'%' : '—')+'</div>'+
+    '</div>';
+  }).join("");
 }
 
+function logoImg(t){
+  const fall = '<div style="width:100%;height:100%;background:'+t.color+';display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff">'+t.sym.slice(0,3)+'</div>';
+  return '<img src="'+t.img+'" alt="" onerror="this.parentNode.innerHTML='+JSON.stringify(fall).replace(/"/g,"&quot;")+'">';
+}
 function logo(t){
-  const fall = '<div style="width:100%;height:100%;background:'+t.color+';display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700">'+t.sym.slice(0,3)+'</div>';
-  return '<div class="tlogo" style="background:'+t.color+'">'+
-    '<img src="'+t.img+'" alt="" onerror="this.parentNode.innerHTML='+JSON.stringify(fall).replace(/"/g,"&quot;")+'">'+
-    '</div>';
+  return '<div class="picon" style="background:'+t.color+'">'+logoImg(t)+'</div>';
 }
 
 /* ===================== sheets ===================== */
@@ -547,8 +590,8 @@ function openEdit(){
 }
 $("editDone").addEventListener("click", () => { hide(); refreshPrices(); });
 $("totalUsd").addEventListener("click", openEdit);
-$("aSwap").addEventListener("click", openEdit);
-$("nSwap").addEventListener("click", openEdit);
+$("plusBtn").addEventListener("click", openEdit);
+$("tokenList").addEventListener("click", e => { if(e.target.closest(".prow")) openEdit(); });
 
 /* ---- settings ---- */
 const B58 = "123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz";
@@ -564,7 +607,6 @@ function openSet(){
     b.classList.toggle("on", (+b.dataset.v) === S.hide));
   show("shSet");
 }
-$("settingsBtn").addEventListener("click", openSet);
 $("acctBtn").addEventListener("click", openSet);
 $("genAddr").addEventListener("click", () => { $("setAddr").value = randAddr(); });
 $("hideSeg").addEventListener("click", e => {
@@ -585,29 +627,11 @@ $("resetAll").addEventListener("click", () => {
   save(); render(); hide(); toast("Reset");
 });
 
-/* ---- receive ---- */
-function openRecv(){
-  if(!S.addr){ S.addr = randAddr(); save(); render(); }
-  $("recvAddr").value = S.addr;
-  show("shRecv");
-}
-$("aRecv").addEventListener("click", openRecv);
-$("copyAddr").addEventListener("click", async () => {
-  try{ await navigator.clipboard.writeText(S.addr); toast("Address copied"); }
-  catch(e){ $("recvAddr").select(); document.execCommand("copy"); toast("Address copied"); }
-});
-$("aSend").addEventListener("click", () => toast("Nothing to send here 👻"));
-$("aBuy").addEventListener("click", openEdit);
-$("nSearch").addEventListener("click", () => toast("Explore is decorative"));
-$("nHist").addEventListener("click", () => { tab="activity"; syncTabs(); });
-
-/* ---- tabs ---- */
-function syncTabs(){
-  document.querySelectorAll(".tab").forEach(t => t.classList.toggle("on", t.dataset.tab === tab));
-  render();
-}
-document.querySelectorAll(".tab").forEach(t =>
-  t.addEventListener("click", () => { tab = t.dataset.tab; syncTabs(); }));
+/* ---- top pill tabs (decorative except Home) ---- */
+document.querySelectorAll(".ptab").forEach(t => t.addEventListener("click", () => {
+  document.querySelectorAll(".ptab").forEach(x => x.classList.toggle("on", x === t));
+  if(t.dataset.tab !== "home") toast("That tab is just for looks here 👻");
+}));
 
 /* ===================== boot ===================== */
 if(!S.addr){ S.addr = randAddr(); save(); }
