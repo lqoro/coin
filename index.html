@@ -60,6 +60,8 @@ input{font:inherit;color:inherit;background:none;border:0;outline:none}
 .bal{padding:6px 20px 4px}
 .bal .amt{font-size:52px;font-weight:700;letter-spacing:-1.6px;font-variant-numeric:tabular-nums;line-height:1.08}
 .bal .amt:active{opacity:.6}
+.bal .amt.flash{animation:balflash .4s ease}
+@keyframes balflash{0%{opacity:1}35%{opacity:.35}100%{opacity:1}}
 .bal .chgRow{margin-top:8px;display:flex;align-items:center;gap:8px;font-size:15px;font-weight:600;font-variant-numeric:tabular-nums}
 .up{color:var(--green)}.down{color:var(--red)}
 .dimc{color:var(--dim)}
@@ -440,7 +442,13 @@ async function refreshPrices(){
     pulling = false;
     if(!refreshing && buzzed && dy >= THRESH){
       refreshing = true;
-      refreshPrices().finally(() => { refreshing = false; });
+      refreshPrices().finally(() => {
+        refreshing = false;
+        const amt = document.getElementById("totalUsd");
+        amt.classList.remove("flash");
+        void amt.offsetWidth; // restart animation
+        amt.classList.add("flash");
+      });
     }
     startY = null; dy = 0;
   }
